@@ -61,6 +61,7 @@ class SourceController < ApplicationController
 
   # GET /source/:project/:package
   def show_package
+    # binding.pry
     if @deleted_package
       tpkg = Package.find_by_project_and_name(@target_project_name, @target_package_name)
       raise PackageExists, 'the package is not deleted' if tpkg
@@ -335,6 +336,7 @@ class SourceController < ApplicationController
 
   # PUT /source/:project/:package/:filename
   def update_file
+    # binding.pry
     check_permissions_for_file
 
     raise PutFileNoPermission, "Insufficient permissions to store file in package #{@package_name}, project #{@project_name}" unless @allowed
@@ -358,7 +360,7 @@ class SourceController < ApplicationController
     end
 
     Package.verify_file!(@pack, params[:filename], request.raw_post)
-
+    # binding.pry
     @path += build_query_from_hash(params, [:user, :comment, :rev, :linkrev, :keeplink, :meta])
     pass_to_backend(@path)
 
@@ -1184,6 +1186,7 @@ class SourceController < ApplicationController
   end
 
   def set_request_data
+    binding.pry
     @request_data = Xmlhash.parse(request.raw_post)
     return if @request_data
 

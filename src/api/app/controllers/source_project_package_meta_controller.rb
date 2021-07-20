@@ -21,7 +21,7 @@ class SourceProjectPackageMetaController < SourceController
   # GET /source/:project/:package/_meta
   def show
     pack = Package.get_by_project_and_name(@project_name, @package_name, use_source: false)
-
+    # binding.pry
     if params.key?(:meta) || params.key?(:rev) || params.key?(:view) || pack.nil?
       # check if this comes from a remote project, also true for _project package
       # or if meta is specified we need to fetch the meta from the backend
@@ -36,6 +36,7 @@ class SourceProjectPackageMetaController < SourceController
 
   # PUT /source/:project/:package/_meta
   def update
+    # binding.pry
     # check for project
     if Package.exists_by_project_and_name(@project_name, @package_name, follow_project_links: false)
       pkg = Package.get_by_project_and_name(@project_name, @package_name, use_source: false)
