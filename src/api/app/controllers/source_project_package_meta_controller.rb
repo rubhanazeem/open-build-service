@@ -53,6 +53,7 @@ class SourceProjectPackageMetaController < SourceController
     end
 
     pkg.set_comment(params[:comment])
+    binding.pry
     pkg.update_from_xml(@request_data)
     render_ok
   end

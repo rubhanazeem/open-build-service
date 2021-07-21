@@ -66,6 +66,10 @@ class Workflow
         Project.find_by(name: target_project_name)
       end
 
+      def source_package
+        Package.find_by_project_and_name(source_project_name, source_package_name)
+      end
+
       def create_project_and_package
         if target_project.nil?
           project = Project.create!(name: target_project_name)
@@ -106,10 +110,11 @@ class Workflow
       end
 
       def link
-        request_data = { name: target_package.name, project: target_project.name, title: source_package.title, description: source_package.description }
-        target_package.update_from_xml(request_data)
-
-        Package.verify_file!(target_package, '_link', request_data)
+        # request_data = { name: target_package.name, project: target_project.name, title: target_package.title, description: target_package.description }
+        xml = Xmlhash.parse(target_package.render_xml)
+        target_package.update_from_xml(xml)
+        binding.pry
+        Package.verify_file!(target_package, '_link', target_package.render_xml)
 
         path = "/source/#{target_project_name}/#{target_package_name}/_link?user=#{@token.user}"
         pass_to_backend(path)

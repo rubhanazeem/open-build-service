@@ -359,6 +359,7 @@ class SourceController < ApplicationController
       end
     end
 
+    binding.pry
     Package.verify_file!(@pack, params[:filename], request.raw_post)
     # binding.pry
     @path += build_query_from_hash(params, [:user, :comment, :rev, :linkrev, :keeplink, :meta])
