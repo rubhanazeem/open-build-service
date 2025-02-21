@@ -282,6 +282,10 @@ class BsRequestAction < ApplicationRecord
     errors.any? { |e| e.include?('diff not yet in cache') }
   end
 
+  def issues
+    Package.find_by_project_and_name(source_project, source_package).package_issues
+  end
+
   def find_action_with_same_target(other_bs_request)
     return nil if other_bs_request.blank?
 
