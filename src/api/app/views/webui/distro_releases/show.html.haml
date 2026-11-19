@@ -1,6 +1,6 @@
 - @pagetitle = "#{@distro.name} release #{@distro_release.name}"
 
-.card
+.card.mb-3
   .card-body
     %h3.mb-3
       %span.text-secondary Release:
@@ -32,7 +32,9 @@
                 %i.fas.fa-trash-can
                 %span.nav-item-name Delete
 
-    %h3.mt-4
+.card.mb-3
+  .card-body
+    %h3.mb-3
       Repositories
     = turbo_frame_tag("distro-release-repositories-#{@distro_release.to_param}") do
       - repositories = @distro_release.repository_architectures.group_by(&:repository)
@@ -58,7 +60,9 @@
           %i.fas.fa-edit
           Edit repositories
 
-    %h3.mt-4
+.card.mb-3
+  .card-body
+    %h3.mb-3
       Lifecycle
     - lifecycles = @distro_release.distro_release_lifecycles.chronological
     - if lifecycles.any?
@@ -81,7 +85,10 @@
         %ul.list-group.list-group-flush
           - lifecycles.each do |lifecycle|
             = render partial: 'webui/distro_release_lifecycles/lifecycle', locals: { lifecycle: lifecycle }
-    %h3.mt-4
+
+.card.mb-3
+  .card-body
+    %h3.mb-3
       Packages
     = form_for(:package, url: project_distro_release_path(@distro_release.project, @distro_release.distro, @distro_release),
                method: :get, id: 'content-selector-filters-form') do |form|
