@@ -50,17 +50,27 @@
 
     %h3.mt-4
       Lifecycle
-    - if @distro_release.distro_release_lifecycles.any?
+    - lifecycles = @distro_release.distro_release_lifecycles.chronological
+    - if lifecycles.any?
       = render partial: 'webui/distros/lifecycle_timeline', locals: { distro_releases: [@distro_release] }
-    %ul.list-group.list-group-flush
-      - @distro_release.distro_release_lifecycles.chronological.each do |lifecycle|
-        = render partial: 'webui/distro_release_lifecycles/lifecycle', locals: { lifecycle: lifecycle }
     - new_lifecycle = DistroReleaseLifecycle.new(distro_release: @distro_release)
     - if policy(new_lifecycle).new?
-      = render partial: 'webui/distro_release_lifecycles/modal',
-               locals: { model: new_lifecycle,
-                         url: project_distro_release_lifecycles_path(@project, @distro, @distro_release),
-                         text: 'New Lifecycle', icon: 'circle-plus', type: 'link text-decoration-none ps-0' }
+      .d-flex.flex-wrap.gap-3
+        = render partial: 'webui/distro_release_lifecycles/modal',
+                 locals: { model: new_lifecycle,
+                           url: project_distro_release_lifecycles_path(@project, @distro, @distro_release),
+                           text: 'New Lifecycle', icon: 'circle-plus', type: 'link text-decoration-none ps-0' }
+        - if lifecycles.any?
+          %button.btn.btn-link.text-decoration-none.ps-0{ type: 'button',
+                                                         data: { 'bs-toggle': 'collapse', 'bs-target': '#distro-release-lifecycles' },
+                                                         aria: { expanded: 'false', controls: 'distro-release-lifecycles' } }
+            %i.fas.fa-edit
+            Edit lifecycles
+      -# The timeline shows the lifecycles, the list is only needed to edit and delete them
+      .collapse#distro-release-lifecycles
+        %ul.list-group.list-group-flush
+          - lifecycles.each do |lifecycle|
+            = render partial: 'webui/distro_release_lifecycles/lifecycle', locals: { lifecycle: lifecycle }
     %h3.mt-4
       Packages
     = form_for(:package, url: project_distro_release_path(@distro_release.project, @distro_release.distro, @distro_release),
