@@ -50,6 +50,8 @@
 
     %h3.mt-4
       Lifecycle
+    - if @distro_release.distro_release_lifecycles.any?
+      = render partial: 'webui/distros/lifecycle_timeline', locals: { distro_releases: [@distro_release] }
     %ul.list-group.list-group-flush
       - @distro_release.distro_release_lifecycles.chronological.each do |lifecycle|
         = render partial: 'webui/distro_release_lifecycles/lifecycle', locals: { lifecycle: lifecycle }
