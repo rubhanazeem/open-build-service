@@ -1,7 +1,8 @@
 - modal_id = model.persisted? ? "distro-release-lifecycle-#{model.id}" : "distro-release-#{model.distro_release_id}-new-lifecycle"
 - type = local_assigns.fetch(:type, 'link text-decoration-none')
+- title = text.presence || (model.persisted? ? 'Edit Lifecycle' : 'New Lifecycle')
 = render ModalComponent.new(modal_id: modal_id,
                             modal_button_data: {text: text, type: type, icon: icon}) do |component|
   - component.with_header do
-    = text
+    = title
   = render partial: 'webui/distro_release_lifecycles/form', locals: { url: url, model: model }
