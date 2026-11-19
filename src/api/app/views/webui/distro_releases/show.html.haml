@@ -35,16 +35,26 @@
     %h3.mt-4
       Repositories
     = turbo_frame_tag("distro-release-repositories-#{@distro_release.to_param}") do
-      %ul.list-group.list-group-flush
-        - @distro_release.repository_architectures.group_by(&:repository).each do |repository, repository_architectures|
-          %li.list-group-item.d-flex.flex-wrap.justify-content-between.px-0
-            #{repository.project.name}/#{repository.name}
-            %div
-              - repository_architectures.each do |ra|
-                %span.badge.text-bg-primary
-                  = ra.architecture.name
+      - repositories = @distro_release.repository_architectures.group_by(&:repository)
+      - if repositories.any?
+        %table.table.table-hover.align-middle.mb-2#distro-release-repositories
+          %thead
+            %tr
+              %th Repository
+              %th Architectures
+          %tbody
+            - repositories.each do |repository, repository_architectures|
+              %tr
+                %td
+                  #{repository.project.name}/#{repository.name}
+                %td
+                  - repository_architectures.each do |ra|
+                    %span.badge.text-bg-primary.me-1
+                      = ra.architecture.name
+      - else
+        %p.text-secondary.mb-2 This distro release has no repositories yet.
       - if policy(@distro_release).edit?
-        = link_to(edit_project_distro_release_repositories_path(@project, @distro, @distro_release)) do
+        = link_to(edit_project_distro_release_repositories_path(@project, @distro, @distro_release), class: 'btn btn-link text-decoration-none ps-0') do
           %i.fas.fa-edit
           Edit repositories
 
