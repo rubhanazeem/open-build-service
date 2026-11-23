@@ -19,7 +19,7 @@ class Webui::RequestController < Webui::WebuiController
   before_action :set_influxdb_data_request_actions, only: %i[show build_results changes changes_diff mentioned_issues]
   before_action :set_superseded_request, only: %i[show request_action_changes build_results changes changes_diff mentioned_issues]
   before_action :check_ajax, only: :sourcediff
-  before_action :prepare_request_data, only: %i[show build_results changes mentioned_issues]
+  before_action :prepare_request_data, only: %i[show build_results changes mentioned_issues complete_build_results]
   before_action :prepare_request_header_data, only: %i[show build_results changes mentioned_issues]
   before_action :cache_diff_data, only: %i[changes request_action_changes]
   after_action :verify_authorized, only: [:create]
@@ -30,13 +30,8 @@ class Webui::RequestController < Webui::WebuiController
     @history_elements = @bs_request.history_elements.includes(:user)
     @request_reviews = @bs_request.reviews.includes(:user, group: :users).for_non_staging_projects(@target_project)
 
-    # retrieve a list of all package maintainers that are assigned to at least one target package
-    @package_maintainers = @bs_request.target_package_maintainers
     # retrieve a list of all project maintainers
     @project_maintainers = @target_project&.maintainers || []
-    # search for a project, where the user is not a package maintainer but a project maintainer and show
-    # a hint if that package has some package maintainers (issue#1970)
-    @show_project_maintainer_hint = !@package_maintainers.empty? && @package_maintainers.exclude?(User.session) && any_project_maintained_by_current_user?
 
     @active_tab = 'conversation'
   end
@@ -531,6 +526,12 @@ class Webui::RequestController < Webui::WebuiController
                      .reduce({}) { |accumulator, sourcediff| accumulator.merge(sourcediff.fetch('issues', {})) }
     # Handling build results
     @staging_project = @bs_request.staging_project.name unless @bs_request.staging_project_id.nil?
+
+    # retrieve a list of all package maintainers that are assigned to at least one target package
+    @package_maintainers = @bs_request.target_package_maintainers
+    # search for a project, where the user is not a package maintainer but a project maintainer and show
+    # a hint if that package has some package maintainers (issue#1970)
+    @show_project_maintainer_hint = !@package_maintainers.empty? && @package_maintainers.exclude?(User.session) && any_project_maintained_by_current_user?
   end
 
   def prepare_request_header_data
