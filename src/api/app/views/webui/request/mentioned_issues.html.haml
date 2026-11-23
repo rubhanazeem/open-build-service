@@ -20,7 +20,19 @@
                                                         actions: @actions, diff_to_superseded_id: @diff_to_superseded_id,
                                                         page_name: 'request_mentioned_issues', notification_id: @current_notification,
                                                         current_notification: @current_notification }
-    .container.p-4
+    .container.p-4.position-relative
+      - if policy(@bs_request).handle_request?
+        .clearfix.mb-3
+          .dropdown.float-end#request-decision-dropdown
+            %button.btn.btn-success.dropdown-toggle{ type: 'button', data: { 'bs-toggle': 'dropdown', 'bs-auto-close': 'outside' },
+                                                     aria: { expanded: 'false' } }
+              Review
+            .dropdown-menu.dropdown-menu-end.p-3.shadow-lg.request-decision-dropdown-menu
+              = render RequestDecisionComponent.new(bs_request: @bs_request,
+                                                    package_maintainers: @package_maintainers,
+                                                    show_project_maintainer_hint: @show_project_maintainer_hint,
+                                                    show_add_comment: false,
+                                                    show_cancel: true)
       - if @issues.empty?
         %p No issues are mentioned for this request action.
       - else

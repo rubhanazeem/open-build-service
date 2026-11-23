@@ -12,7 +12,7 @@
     = render partial: 'request_tabs',
         locals: { bs_request: @bs_request, action: @action, issues: @issues,
                   actions_count: @actions.count, active_tab: @active_tab }
-    .container.p-4
+    .container.p-4.position-relative
       - if @buildable && @actions.count <= BsRequest::MAX_ACTIONS_TO_RENDER_BUILD_RESULTS
         .build-results-content
           -# For a request staged in a staging project, we display the Build Results / RPM Lint from the staging project instead
@@ -28,6 +28,18 @@
           updateBuildResultBeta();
       - else
         .build-results-content
+          - if policy(@bs_request).handle_request?
+            .clearfix.mb-3
+              .dropdown.float-end#request-decision-dropdown
+                %button.btn.btn-success.dropdown-toggle{ type: 'button', data: { 'bs-toggle': 'dropdown', 'bs-auto-close': 'outside' },
+                                                         aria: { expanded: 'false' } }
+                  Review
+                .dropdown-menu.dropdown-menu-end.p-3.shadow-lg.request-decision-dropdown-menu
+                  = render RequestDecisionComponent.new(bs_request: @bs_request,
+                                                        package_maintainers: @package_maintainers,
+                                                        show_project_maintainer_hint: @show_project_maintainer_hint,
+                                                        show_add_comment: false,
+                                                        show_cancel: true)
           .result
             %i
               - if @actions.count > BsRequest::MAX_ACTIONS_TO_RENDER_BUILD_RESULTS

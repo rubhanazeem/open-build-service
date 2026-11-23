@@ -23,7 +23,19 @@
   %button.btn.btn-primary#filter-button{ type: :submit }
     Apply Filter
 
-  = render partial: 'webui/shared/build_status_legend_modal', locals: { legend: Buildresult::STATUS_DESCRIPTION }
+  .float-end.d-flex
+    - if @bs_request && policy(@bs_request).handle_request?
+      .dropdown.me-2#request-decision-dropdown
+        %button.btn.btn-success.dropdown-toggle{ type: 'button', data: { 'bs-toggle': 'dropdown', 'bs-auto-close': 'outside' },
+                                                 aria: { expanded: 'false' } }
+          Review
+        .dropdown-menu.dropdown-menu-end.p-3.shadow-lg.request-decision-dropdown-menu
+          = render RequestDecisionComponent.new(bs_request: @bs_request,
+                                                package_maintainers: @package_maintainers,
+                                                show_project_maintainer_hint: @show_project_maintainer_hint,
+                                                show_add_comment: false,
+                                                show_cancel: true)
+    = render partial: 'webui/shared/build_status_legend_modal', locals: { legend: Buildresult::STATUS_DESCRIPTION }
 
 - if selected_filters_text.present?
   .mt-3 Selected filters: #{selected_filters_text}

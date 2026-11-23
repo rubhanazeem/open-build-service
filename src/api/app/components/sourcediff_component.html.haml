@@ -7,7 +7,7 @@
           %i.fas.fa-sync-alt{ id: "cache#0-reload" }
         = render partial: 'webui/shared/loading', locals: { text: 'Loading changes...', wrapper_css: ['loading', 'invisible'] }
     - else
-      - @webui_sourcediff.each do |sourcediff|
+      - @webui_sourcediff.each_with_index do |sourcediff, index|
         - if expandable?(sourcediff)
           .alert.alert-warning
             Some of the changes are collapsed due to size.
@@ -16,13 +16,23 @@
         - source_rev = sourcediff.dig('new', 'srcmd5') || @action.source_rev
         - target_rev = sourcediff.dig('old', 'srcmd5')
         .clearfix.mb-2
-          - if sourcediff['filenames'].present?
-            .btn-group.float-end
-              %button.btn.btn-outline-secondary.expand-diffs{ data: { object: @action.source_package } }
-                Expand all
-              %button.btn.btn-outline-secondary.collapse-diffs{ data: { object: @action.source_package } }
-                Collapse all
-          - else
+          .float-end.d-flex
+            - if index.zero? && policy(@bs_request).handle_request?
+              .dropdown.me-2#request-decision-dropdown
+                %button.btn.btn-success.dropdown-toggle{ type: 'button', data: { 'bs-toggle': 'dropdown', 'bs-auto-close': 'outside' },
+                                                         aria: { expanded: 'false' } }
+                  Review
+                .dropdown-menu.dropdown-menu-end.p-3.shadow-lg.request-decision-dropdown-menu
+                  = render RequestDecisionComponent.new(bs_request: @bs_request,
+                                                        show_add_comment: false,
+                                                        show_cancel: true)
+            - if sourcediff['filenames'].present?
+              .btn-group
+                %button.btn.btn-outline-secondary.expand-diffs{ data: { object: @action.source_package } }
+                  Expand all
+                %button.btn.btn-outline-secondary.collapse-diffs{ data: { object: @action.source_package } }
+                  Collapse all
+          - unless sourcediff['filenames'].present?
             %p No source changes.
 
         - if sourcediff[:error]

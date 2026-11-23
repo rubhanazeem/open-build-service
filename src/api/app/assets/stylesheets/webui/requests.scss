@@ -135,6 +135,11 @@
   }
 }
 
+.request-decision-dropdown-menu {
+  width: 550px;
+  max-width: 90vw;
+}
+
 @include media-breakpoint-between(xs, md) {
   #filter-desktop {
     &.sticky-top { top: $top-navigation-height; }
