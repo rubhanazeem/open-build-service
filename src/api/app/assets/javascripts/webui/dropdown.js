@@ -3,14 +3,12 @@
 
 $(document).ready(function(){
   // Dismiss dropdowns using a button with `data-bs-dismiss` value
-  const dropdownDismissList = document.querySelectorAll('[data-bs-dismiss="dropdown"]');
+  $(document).on('click', '[data-bs-dismiss="dropdown"]', function () {
+    const target = this.closest('.dropdown');
+    if (!target) return;
 
-  dropdownDismissList.forEach((dismiss) => {
-    dismiss.addEventListener( 'click', function () {
-      const target = this.closest(`.dropdown`);
-
-      bootstrap.Dropdown.getOrCreateInstance(target).hide();
-    });
+    const toggle = target.querySelector('[data-bs-toggle="dropdown"]') || target;
+    bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
   });
 });
 

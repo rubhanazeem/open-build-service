@@ -1,3 +1,6 @@
+- if show_cancel?
+  .d-flex.justify-content-end.mb-2
+    %button.btn-close.small{ type: 'button', style: 'font-size: 0.65rem;', data: { 'bs-dismiss': 'dropdown' }, aria: { label: 'Close' } }
 .request-decision.mt-n1
   = form_with(url: request_changerequest_path, html: { id: "request_handle_form_#{bs_request.id}" }, local: true) do |form|
     = hidden_field_tag(:number, @bs_request.number)
@@ -16,9 +19,12 @@
                                             canned_response_object: @bs_request)
       .mt-2#decision-buttons-row
         %div
-          - if policy(Comment.new(commentable:@bs_request)).create?
+          - if show_add_comment?
             = submit_tag 'Add comment', class: 'btn btn-outline-primary me-2', data: { disable_with: 'Creating comment...' }, name: 'commented'
         %div
+          - if show_cancel?
+            %button.btn.btn-outline-secondary.me-2{ type: 'button', data: { 'bs-dismiss': 'dropdown' } }
+              Cancel
           - if policy(@bs_request).revoke_request?
             = submit_tag('Revoke request', name: 'revoked', class: 'btn btn-danger ms-2',
                           title: 'Cancel the request', data: { confirm: "Revoke this request?" })

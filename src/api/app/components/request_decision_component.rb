@@ -1,11 +1,14 @@
 class RequestDecisionComponent < ApplicationComponent
-  attr_reader :bs_request
+  attr_reader :bs_request, :show_add_comment, :show_cancel
 
-  def initialize(bs_request:, package_maintainers:, show_project_maintainer_hint:)
+  def initialize(bs_request:, package_maintainers: nil, show_project_maintainer_hint: false,
+                 show_add_comment: true, show_cancel: false)
     super()
 
     @bs_request = bs_request
-    @package_maintainers = package_maintainers
+    @package_maintainers = package_maintainers || @bs_request.target_package_maintainers
+    @show_add_comment = show_add_comment
+    @show_cancel = show_cancel
 
     return unless render? && show_project_maintainer_hint
 
@@ -17,6 +20,14 @@ class RequestDecisionComponent < ApplicationComponent
 
   def render?
     policy(@bs_request).handle_request?
+  end
+
+  def show_add_comment?
+    @show_add_comment && policy(Comment.new(commentable: @bs_request)).create?
+  end
+
+  def show_cancel?
+    @show_cancel
   end
 
   def single_action_request
